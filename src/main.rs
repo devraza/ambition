@@ -1,4 +1,9 @@
-use bevy::prelude::*;
+use bevy::{
+    core_pipeline::{
+        tonemapping::Tonemapping,
+    },
+    prelude::*,
+};
 use std::collections::HashMap;
 use lazy_static::lazy_static;
 
@@ -37,13 +42,15 @@ fn setup(mut commands: Commands) {
                 hdr: true,
                 ..default()
             },
+            tonemapping: Tonemapping::TonyMcMapface,
             ..default()
         }
     );
 }
 
 fn render_ui(
-    server: Res<AssetServer>
+    server: Res<AssetServer>,
+    mut commands: Commands
 ) {
     let bold_font: Handle<Font> = server.load("fonts/iosevka-comfy-bold.ttf");
     let regular_font: Handle<Font> = server.load("fonts/iosevka-comfy-regular.ttf");
@@ -53,4 +60,11 @@ fn render_ui(
         font_size: 60.0,
         color: HYPERNOVA.get("WHITE").copied().unwrap(),
     };
+    let text_alignment = TextAlignment::Center;
+    commands.spawn((
+        Text2dBundle {
+            text: Text::from_section("translation", text_style.clone())
+                .with_alignment(text_alignment),
+            ..default()
+    )};
 }
