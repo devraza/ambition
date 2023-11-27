@@ -52,10 +52,8 @@
         devShells.default = pkgs.mkShell rec {
           shellHook = ''export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath [
             pkgs.vulkan-loader
-            pkgs.xorg.libX11
-            pkgs.xorg.libXcursor
-            pkgs.xorg.libXi
-            pkgs.xorg.libXrandr
+            pkgs.udev
+            pkgs.alsa-lib
           ]}"'';
           # Use nightly cargo & rustc provided by fenix. Add for packages for the dev shell here
           buildInputs = with pkgs; [
