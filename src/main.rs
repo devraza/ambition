@@ -28,7 +28,6 @@ lazy_static!{
 
 fn main() {
     App::new()
-        .insert_resource(ClearColor(HYPERNOVA.get("DARK_GRAY").copied().unwrap()))
         .add_plugins(DefaultPlugins)
         .add_systems(
             Startup,
@@ -65,28 +64,41 @@ fn render_ui(
     commands
         .spawn(NodeBundle {
             style: Style {
-                // fill the entire window
                 width: Val::Percent(100.),
-                flex_direction: FlexDirection::Column,
-                align_items: AlignItems::Center,
+                height: Val::Percent(100.0),
+                justify_content: JustifyContent::SpaceBetween,
                 ..Default::default()
             },
-            background_color: BackgroundColor(Color::BLACK),
+            background_color: BackgroundColor(HYPERNOVA.get("DARK_GRAY").copied().unwrap()),
             ..Default::default()
         })
-        .with_children(|builder| {
-            builder.spawn(
-                TextBundle::from_section("Ambition", text_style.clone())
-                    .with_text_alignment(TextAlignment::Center)
-                    .with_style(Style {
-                        position_type: PositionType::Absolute,
-                        margin: UiRect {
-                            top: Val::Percent(10.),
-                            ..default()
-                        },
-                        ..default()
-                    }),
-                );
+        .with_children(|parent| {
+            parent
+                .spawn(NodeBundle {
+                    style: Style {
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.0),
+                        flex_direction: FlexDirection::Column,
+                        align_items: AlignItems::Center,
+                        ..Default::default()
+                    },
+                    background_color: BackgroundColor(HYPERNOVA.get("DARK_GRAY").copied().unwrap()),
+                    ..Default::default()
+                })
+                .with_children(|parent| {
+                    parent
+                        .spawn(TextBundle::from_section("Ambition", text_style.clone())
+                            .with_text_alignment(TextAlignment::Center)
+                            .with_style(Style {
+                                position_type: PositionType::Absolute,
+                                margin: UiRect {
+                                    top: Val::Percent(10.),
+                                    ..default()
+                                },
+                                ..default()
+                            })
+                        );
+                });
         }
     );
 }
