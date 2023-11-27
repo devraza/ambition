@@ -1,209 +1,56 @@
-//! Illustrates bloom post-processing in 2d.
+use bevy::prelude::*;
+use std::collections::HashMap;
+use lazy_static::lazy_static;
 
-use bevy::{
-    core_pipeline::{
-        bloom::{BloomCompositeMode, BloomSettings},
-        tonemapping::Tonemapping,
-    },
-    prelude::*,
-    sprite::MaterialMesh2dBundle,
-};
+// Create a map of the Hypernova colorscheme
+lazy_static!{
+    static ref HYPERNOVA: HashMap<&'static str, Color> = vec![
+        ("BLACK", Color::hex("0d0d0f").unwrap()),
+        ("DARK_GRAY", Color::hex("151517").unwrap()),
+        ("GRAY", Color::hex("27272b").unwrap()),
+        ("LIGHT_GRAY", Color::hex("454449").unwrap()),
+        ("SUBTEXT", Color::hex("d9d0d7").unwrap()),
+        ("WHITE", Color::hex("fefefa").unwrap()),
+        ("RED", Color::hex("f06969").unwrap()),
+        ("MAGENTA", Color::hex("e887bb").unwrap()),
+        ("PURPLE", Color::hex("a292e8").unwrap()),
+        ("BLUE", Color::hex("78b9c4").unwrap()),
+        ("CYAN", Color::hex("7ee6ae").unwrap()),
+        ("GREEN", Color::hex("91d65c").unwrap()),
+        ("YELLOW", Color::hex("d9d564").unwrap()),
+    ].iter().copied().collect();
+}
 
 fn main() {
     App::new()
+        .insert_resource(ClearColor(HYPERNOVA.get("DARK_GRAY").copied().unwrap()))
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, setup)
-        .add_systems(Update, update_bloom_settings)
+        .add_systems(Update, render_ui)
         .run();
 }
 
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    asset_server: Res<AssetServer>,
-) {
-    commands.spawn((
+fn setup(mut commands: Commands) {
+    commands.spawn(
         Camera2dBundle {
             camera: Camera {
-                hdr: true, // 1. HDR is required for bloom
+                hdr: true,
                 ..default()
             },
-            tonemapping: Tonemapping::TonyMcMapface, // 2. Using a tonemapper that desaturates to white is recommended
             ..default()
-        },
-        BloomSettings::default(), // 3. Enable bloom for the camera
-    ));
-
-    // Sprite
-    commands.spawn(SpriteBundle {
-        texture: asset_server.load("branding/bevy_bird_dark.png"),
-        sprite: Sprite {
-            color: Color::rgb(5.0, 5.0, 5.0), // 4. Put something bright in a dark environment to see the effect
-            custom_size: Some(Vec2::splat(160.0)),
-            ..default()
-        },
-        ..default()
-    });
-
-    // Circle mesh
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: meshes.add(shape::Circle::new(100.).into()).into(),
-        // 4. Put something bright in a dark environment to see the effect
-        material: materials.add(ColorMaterial::from(Color::rgb(7.5, 0.0, 7.5))),
-        transform: Transform::from_translation(Vec3::new(-200., 0., 0.)),
-        ..default()
-    });
-
-    // Hexagon mesh
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: meshes
-            .add(shape::RegularPolygon::new(100., 6).into())
-            .into(),
-        // 4. Put something bright in a dark environment to see the effect
-        material: materials.add(ColorMaterial::from(Color::rgb(6.25, 9.4, 9.1))),
-        transform: Transform::from_translation(Vec3::new(200., 0., 0.)),
-        ..default()
-    });
-
-    // UI
-    commands.spawn(
-        TextBundle::from_section(
-            "",
-            TextStyle {
-                font_size: 18.0,
-                color: Color::WHITE,
-                ..default()
-            },
-        )
-        .with_style(Style {
-            position_type: PositionType::Absolute,
-            bottom: Val::Px(10.0),
-            left: Val::Px(10.0),
-            ..default()
-        }),
+        }
     );
 }
 
-// ------------------------------------------------------------------------------------------------
-
-fn update_bloom_settings(
-    mut camera: Query<(Entity, Option<&mut BloomSettings>), With<Camera>>,
-    mut text: Query<&mut Text>,
-    mut commands: Commands,
-    keycode: Res<Input<KeyCode>>,
-    time: Res<Time>,
+fn render_ui(
+    server: Res<AssetServer>
 ) {
-    let bloom_settings = camera.single_mut();
-    let mut text = text.single_mut();
-    let text = &mut text.sections[0].value;
+    let bold_font: Handle<Font> = server.load("fonts/iosevka-comfy-bold.ttf");
+    let regular_font: Handle<Font> = server.load("fonts/iosevka-comfy-regular.ttf");
 
-    match bloom_settings {
-        (entity, Some(mut bloom_settings)) => {
-            *text = "BloomSettings (Toggle: Space)\n".to_string();
-            text.push_str(&format!("(Q/A) Intensity: {}\n", bloom_settings.intensity));
-            text.push_str(&format!(
-                "(W/S) Low-frequency boost: {}\n",
-                bloom_settings.low_frequency_boost
-            ));
-            text.push_str(&format!(
-                "(E/D) Low-frequency boost curvature: {}\n",
-                bloom_settings.low_frequency_boost_curvature
-            ));
-            text.push_str(&format!(
-                "(R/F) High-pass frequency: {}\n",
-                bloom_settings.high_pass_frequency
-            ));
-            text.push_str(&format!(
-                "(T/G) Mode: {}\n",
-                match bloom_settings.composite_mode {
-                    BloomCompositeMode::EnergyConserving => "Energy-conserving",
-                    BloomCompositeMode::Additive => "Additive",
-                }
-            ));
-            text.push_str(&format!(
-                "(Y/H) Threshold: {}\n",
-                bloom_settings.prefilter_settings.threshold
-            ));
-            text.push_str(&format!(
-                "(U/J) Threshold softness: {}\n",
-                bloom_settings.prefilter_settings.threshold_softness
-            ));
-
-            if keycode.just_pressed(KeyCode::Space) {
-                commands.entity(entity).remove::<BloomSettings>();
-            }
-
-            let dt = time.delta_seconds();
-
-            if keycode.pressed(KeyCode::A) {
-                bloom_settings.intensity -= dt / 10.0;
-            }
-            if keycode.pressed(KeyCode::Q) {
-                bloom_settings.intensity += dt / 10.0;
-            }
-            bloom_settings.intensity = bloom_settings.intensity.clamp(0.0, 1.0);
-
-            if keycode.pressed(KeyCode::S) {
-                bloom_settings.low_frequency_boost -= dt / 10.0;
-            }
-            if keycode.pressed(KeyCode::W) {
-                bloom_settings.low_frequency_boost += dt / 10.0;
-            }
-            bloom_settings.low_frequency_boost = bloom_settings.low_frequency_boost.clamp(0.0, 1.0);
-
-            if keycode.pressed(KeyCode::D) {
-                bloom_settings.low_frequency_boost_curvature -= dt / 10.0;
-            }
-            if keycode.pressed(KeyCode::E) {
-                bloom_settings.low_frequency_boost_curvature += dt / 10.0;
-            }
-            bloom_settings.low_frequency_boost_curvature =
-                bloom_settings.low_frequency_boost_curvature.clamp(0.0, 1.0);
-
-            if keycode.pressed(KeyCode::F) {
-                bloom_settings.high_pass_frequency -= dt / 10.0;
-            }
-            if keycode.pressed(KeyCode::R) {
-                bloom_settings.high_pass_frequency += dt / 10.0;
-            }
-            bloom_settings.high_pass_frequency = bloom_settings.high_pass_frequency.clamp(0.0, 1.0);
-
-            if keycode.pressed(KeyCode::G) {
-                bloom_settings.composite_mode = BloomCompositeMode::Additive;
-            }
-            if keycode.pressed(KeyCode::T) {
-                bloom_settings.composite_mode = BloomCompositeMode::EnergyConserving;
-            }
-
-            if keycode.pressed(KeyCode::H) {
-                bloom_settings.prefilter_settings.threshold -= dt;
-            }
-            if keycode.pressed(KeyCode::Y) {
-                bloom_settings.prefilter_settings.threshold += dt;
-            }
-            bloom_settings.prefilter_settings.threshold =
-                bloom_settings.prefilter_settings.threshold.max(0.0);
-
-            if keycode.pressed(KeyCode::J) {
-                bloom_settings.prefilter_settings.threshold_softness -= dt / 10.0;
-            }
-            if keycode.pressed(KeyCode::U) {
-                bloom_settings.prefilter_settings.threshold_softness += dt / 10.0;
-            }
-            bloom_settings.prefilter_settings.threshold_softness = bloom_settings
-                .prefilter_settings
-                .threshold_softness
-                .clamp(0.0, 1.0);
-        }
-
-        (entity, None) => {
-            *text = "Bloom: Off (Toggle: Space)".to_string();
-
-            if keycode.just_pressed(KeyCode::Space) {
-                commands.entity(entity).insert(BloomSettings::default());
-            }
-        }
-    }
+    let text_style = TextStyle {
+        font: bold_font,
+        font_size: 60.0,
+        color: HYPERNOVA.get("WHITE").copied().unwrap(),
+    };
 }
-

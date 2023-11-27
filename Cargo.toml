@@ -20,3 +20,4 @@ rustflags = ["-C", "link-arg=-fuse-ld=mold"]
 
 [dependencies]
 bevy = { version = "0.12.0", features = [ "wayland", "dynamic_linking" ] }
+lazy_static = "1.4.0"
