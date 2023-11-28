@@ -1,5 +1,5 @@
 {
-  description = "Rust development environment for Aspiration using fenix";
+  description = "Rust development environment for Ambition using fenix";
 
   inputs = {
     fenix = {
@@ -36,7 +36,7 @@
             inherit (toolchain) cargo rustc;
           })
           .buildRustPackage {
-            pname = "aspiration";
+            pname = "ambition";
             version = "0.1.0";
             src = ./.;
             cargoLock.lockFile = ./Cargo.lock;
