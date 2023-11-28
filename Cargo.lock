@@ -137,6 +137,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ambition"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "lazy_static",
+]
+
+[[package]]
 name = "android-activity"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -203,14 +211,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39e9c3835d686b0a6084ab4234fcd1b07dbf6e4767dce60874b12356a25ecd4a"
 dependencies = [
  "libloading 0.7.4",
-]
-
-[[package]]
-name = "aspiration"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "lazy_static",
 ]
 
 [[package]]
