@@ -9,6 +9,9 @@ use bevy::{
 use std::collections::HashMap;
 use lazy_static::lazy_static;
 
+mod helpers;
+use crate::helpers::*;
+
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const PKGNAME: &str = env!("CARGO_PKG_NAME");
 
@@ -29,14 +32,6 @@ lazy_static!{
         ("GREEN", Color::hex("91d65c").unwrap()),
         ("YELLOW", Color::hex("d9d564").unwrap()),
     ].iter().copied().collect();
-}
-
-fn titlecase(s: &str) -> String {
-    let mut c = s.chars();
-    match c.next() {
-        None => String::new(),
-        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
-    }
 }
 
 fn main() {
