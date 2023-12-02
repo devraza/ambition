@@ -38,7 +38,7 @@ fn main() {
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
-                    title: format!("{} {}", titlecase(PKGNAME), VERSION).into(),
+                    title: format!("{} {}", titlecase(PKGNAME), VERSION),
                     mode: WindowMode::Fullscreen,
                     ..default()
                 }),
