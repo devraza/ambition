@@ -69,6 +69,8 @@
             mold
             clang
             pkg-config
+            
+            tokei
           ];
           # Specify the rust-src path (many editors rely on this)
           RUST_SRC_PATH = "${toolchain.rust-src}/lib/rustlib/src/rust/library";
