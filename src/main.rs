@@ -46,9 +46,16 @@ fn main() {
             }),
             EguiPlugin,
         ))
+        .init_resource::<UiState>()
         .add_systems(Startup, (setup, setup_ui))
         .add_systems(Update, render_ui)
         .run();
+}
+
+#[derive(Default, Resource)]
+struct UiState {
+    username: String,
+    password: String,
 }
 
 // Bevy engine setup
@@ -80,7 +87,7 @@ fn setup_ui(mut contexts: EguiContexts) {
 }
 
 // On update: render the UI
-fn render_ui(mut contexts: EguiContexts, mut windows: Query<&mut Window>) {
+fn render_ui(mut contexts: EguiContexts, mut windows: Query<&mut Window>, mut ui_state: ResMut<UiState>) {
     let window = windows.single_mut();
     let window_width = window.resolution.width();
     let window_height = window.resolution.height();
@@ -90,14 +97,48 @@ fn render_ui(mut contexts: EguiContexts, mut windows: Query<&mut Window>) {
         .resizable(false)
         .title_bar(false)
         .show(contexts.ctx_mut(), |ui| {
-            ui.set_width(window_width / 2.5);
+            ui.set_width(window_width / 3.);
             ui.set_height(window_height / 3.);
 
             ui.with_layout(egui::Layout::top_down(egui::Align::Center), |ui| {
                 let purple = HYPERNOVA.get("PURPLE").unwrap();
                 let purple = egui::Color32::from_rgb(purple.0, purple.1, purple.2);
 
-                ui.heading(egui::RichText::new("Login").size(30.).color(purple));
+                let black = HYPERNOVA.get("BLACK").unwrap();
+                let black = egui::Color32::from_rgb(black.0, black.1, black.2);
+
+                // Define spacing between items (widgets) and add manually add some space
+                // between the window border and the heading
+                ui.spacing_mut()
+                    .item_spacing = egui::vec2(0., 10.);
+                ui.spacing_mut()
+                    .button_padding = egui::vec2(20., 10.);
+                ui.add_space(window_height / 22.);
+
+                ui.heading(egui::RichText::new("Login").size(30.).color(purple)); // The window 'title'
+
+                // Manually add some space between the heading and the text inputs
+                ui.add_space(window_height / 28.);
+
+                // The text inputs
+                let username = egui::TextEdit::singleline(&mut ui_state.username)
+                    .hint_text("Username")
+                    .margin(egui::vec2(10., 10.))
+                    .desired_width(window_width / 4.)
+                    .show(ui);
+
+                let password = egui::TextEdit::singleline(&mut ui_state.password)
+                    .password(true)
+                    .margin(egui::vec2(10., 10.))
+                    .hint_text("Password")
+                    .desired_width(window_width / 4.)
+                    .show(ui);
+
+                // Manually add some space between the heading and the text inputs
+                ui.add_space(window_height / 20.);
+
+                let button = ui.add(egui::Button::new("Confirm")
+                    .fill(black));
             });
         });
 }
