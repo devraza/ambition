@@ -134,11 +134,16 @@ fn render_ui(mut contexts: EguiContexts, mut windows: Query<&mut Window>, mut ui
                     .desired_width(window_width / 4.)
                     .show(ui);
 
-                // Manually add some space between the heading and the text inputs
-                ui.add_space(window_height / 20.);
+                // Manually add some space between the text inputs and the 'confirm' button
+                ui.add_space(window_height / 26.);
 
                 let button = ui.add(egui::Button::new("Confirm")
                     .fill(black));
+
+                // Manually add some space between the button and the bottom border of the
+                // window...for scaling purposes
+                ui.add_space(window_height / 22.);
+
             });
         });
 }
