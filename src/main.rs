@@ -155,7 +155,7 @@ fn movement(
         // Change the player rotation around the Z-axis only if not blinking
         transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
     } else {
-        movement_distance = blink_factor * player.movement_speed * 0.1;
+        movement_distance = blink_factor * player.movement_speed * 0.01;
     }
 
     // Create the translation using the movement direction and distance
