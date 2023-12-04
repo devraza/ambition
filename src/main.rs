@@ -24,7 +24,7 @@ lazy_static! {
         ("MAGENTA", (232, 135, 187)),
         ("PURPLE", (162, 146, 232)),
         ("BLUE", (120, 175, 196)),
-        ("CYAN", (126, 230, 174)),
+        ("CYAN", (127, 230, 174)),
         ("GREEN", (145, 214, 92)),
         ("YELLOW", (217, 213, 100)),
     ]
@@ -47,6 +47,7 @@ fn main() {
             EguiPlugin,
         ))
         .init_resource::<UiState>()
+        .init_resource::<OpenWindows>()
         .add_systems(Startup, (setup, setup_ui))
         .add_systems(Update, render_ui)
         .run();
@@ -58,8 +59,13 @@ struct UiState {
     password: String,
 }
 
+#[derive(Default, Resource)]
+struct OpenWindows {
+    login_open: bool,
+}
+
 // Bevy engine setup
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle {
         camera: Camera {
             hdr: true,
@@ -68,6 +74,13 @@ fn setup(mut commands: Commands) {
         tonemapping: Tonemapping::TonyMcMapface,
         ..default()
     });
+    commands.spawn((
+        SpriteBundle {
+            texture: asset_server.load("black-square.png"),
+            transform: Transform::from_xyz(100., 0., 0.),
+            ..default()
+        }
+    ));
 }
 
 // On startup: setup some UI components
@@ -87,16 +100,32 @@ fn setup_ui(mut contexts: EguiContexts) {
 }
 
 // On update: render the UI
-fn render_ui(mut contexts: EguiContexts, mut windows: Query<&mut Window>, mut ui_state: ResMut<UiState>) {
+fn render_ui(
+    mut contexts: EguiContexts,
+    mut windows: Query<&mut Window>,
+    mut ui_state: ResMut<UiState>,
+    mut open_windows: ResMut<OpenWindows>,
+    asset_server: Res<AssetServer>,
+    keys: Res<Input<KeyCode>>,
+) {
     let window = windows.single_mut();
     let window_width = window.resolution.width();
     let window_height = window.resolution.height();
+
+    let ctx = contexts.ctx_mut();
+
+    if keys.just_pressed(KeyCode::Space) {
+    }
+    if keys.pressed(KeyCode::W) {
+
+    }
 
     egui::Window::new("Login")
         .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::new(0., 0.))
         .resizable(false)
         .title_bar(false)
-        .show(contexts.ctx_mut(), |ui| {
+        .open(&mut open_windows.login_open)
+        .show(ctx, |ui| {
             ui.set_width(window_width / 3.);
             ui.set_height(window_height / 3.);
 
@@ -109,10 +138,8 @@ fn render_ui(mut contexts: EguiContexts, mut windows: Query<&mut Window>, mut ui
 
                 // Define spacing between items (widgets) and add manually add some space
                 // between the window border and the heading
-                ui.spacing_mut()
-                    .item_spacing = egui::vec2(0., 10.);
-                ui.spacing_mut()
-                    .button_padding = egui::vec2(20., 10.);
+                ui.spacing_mut().item_spacing = egui::vec2(0., 10.);
+                ui.spacing_mut().button_padding = egui::vec2(20., 10.);
                 ui.add_space(window_height / 22.);
 
                 ui.heading(egui::RichText::new("Login").size(30.).color(purple)); // The window 'title'
@@ -137,13 +164,11 @@ fn render_ui(mut contexts: EguiContexts, mut windows: Query<&mut Window>, mut ui
                 // Manually add some space between the text inputs and the 'confirm' button
                 ui.add_space(window_height / 26.);
 
-                let button = ui.add(egui::Button::new("Confirm")
-                    .fill(black));
+                let button = ui.add(egui::Button::new("Confirm").fill(black));
 
                 // Manually add some space between the button and the bottom border of the
                 // window...for scaling purposes
                 ui.add_space(window_height / 22.);
-
             });
         });
 }
