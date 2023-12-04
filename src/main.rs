@@ -178,16 +178,12 @@ fn render_ui(
     mut windows: Query<&mut Window>,
     mut ui_state: ResMut<UiState>,
     mut open_windows: ResMut<OpenWindows>,
-    keys: Res<Input<KeyCode>>,
 ) {
     let window = windows.single_mut();
     let window_width = window.resolution.width();
     let window_height = window.resolution.height();
 
     let ctx = contexts.ctx_mut();
-
-    if keys.just_pressed(KeyCode::Space) {}
-    if keys.pressed(KeyCode::W) {}
 
     egui::Window::new("Login")
         .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::new(0., 0.))
