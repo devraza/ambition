@@ -1,4 +1,4 @@
-use bevy::{core_pipeline::tonemapping::Tonemapping, prelude::*, window::*};
+use bevy::{core_pipeline::tonemapping::Tonemapping, prelude::*, window::*, winit::WinitSettings};
 
 use bevy_egui::{egui, EguiContexts, EguiPlugin};
 
@@ -48,6 +48,8 @@ fn main() {
         ))
         .init_resource::<UiState>()
         .init_resource::<OpenWindows>()
+        // Only run the app when there is user input, reducing resource usage
+        .insert_resource(WinitSettings::desktop_app())
         .add_systems(Startup, (setup, setup_ui))
         .add_systems(Update, (render_ui, movement))
         .run();
