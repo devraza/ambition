@@ -49,10 +49,11 @@ fn main() {
         .init_resource::<UiState>()
         .init_resource::<OpenWindows>()
         .add_systems(Startup, (setup, setup_ui))
-        .add_systems(Update, render_ui)
+        .add_systems(Update, (render_ui, movement))
         .run();
 }
 
+// Define UI resources
 #[derive(Default, Resource)]
 struct UiState {
     username: String,
@@ -62,6 +63,13 @@ struct UiState {
 #[derive(Default, Resource)]
 struct OpenWindows {
     login_open: bool,
+}
+
+// Define the player component
+#[derive(Component)]
+struct Player {
+    movement_speed: f32,
+    rotation_speed: f32,
 }
 
 // Bevy engine setup
@@ -76,10 +84,13 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
     commands.spawn((
         SpriteBundle {
-            texture: asset_server.load("black-square.png"),
-            transform: Transform::from_xyz(100., 0., 0.),
+            texture: asset_server.load("player/player.png"),
             ..default()
-        }
+        },
+        Player {
+            movement_speed: 1024.,
+            rotation_speed: f32::to_radians(360.),
+        },
     ));
 }
 
@@ -99,13 +110,72 @@ fn setup_ui(mut contexts: EguiContexts) {
     contexts.ctx_mut().set_fonts(fonts);
 }
 
+// Define the player movement system
+fn movement(
+    time: Res<Time>,
+    keys: Res<Input<KeyCode>>,
+    mut windows: Query<&mut Window>,
+    mut query: Query<(&Player, &mut Transform)>,
+) {
+    let (player, mut transform) = query.single_mut();
+
+    let mut rotation_factor = 0.;
+    let mut movement_factor = 0.;
+    let mut blink_factor = 0.;
+
+    if keys.pressed(KeyCode::W) {
+        movement_factor += 1.;
+    }
+    if keys.pressed(KeyCode::S) {
+        movement_factor -= 1.;
+    }
+    if keys.pressed(KeyCode::A) {
+        rotation_factor += 1.;
+    }
+    if keys.pressed(KeyCode::D) {
+        rotation_factor -= 1.;
+    }
+    if keys.pressed(KeyCode::Space) {
+        blink_factor += 4.;
+    }
+    if keys.pressed(KeyCode::Space) && keys.just_released(KeyCode::Right) {
+        blink_factor += 4.;
+    };
+
+    // Get the player's *forward* vector
+    let movement_direction = transform.rotation * Vec3::Y;
+
+    // Initialise the movement distance variable (to bring it into scope)
+    let movement_distance: f32;
+
+    if blink_factor == 0. {
+        movement_distance = movement_factor * player.movement_speed * time.delta_seconds();
+        // Change the player rotation around the Z-axis only if not blinking
+        transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
+    } else {
+        movement_distance = blink_factor * player.movement_speed * 0.1;
+    }
+
+    // Create the translation using the movement direction and distance
+    let translation_delta = movement_direction * movement_distance;
+    // Update the player translation with the created translation
+    transform.translation += translation_delta;
+
+    // Define the bounds of play (the window size)
+    let window = windows.single_mut();
+    let bounds = Vec3::from((
+        Vec2::new(window.resolution.width(), window.resolution.height()) / 2.,
+        0.,
+    ));
+    transform.translation = transform.translation.min(bounds).max(-bounds);
+}
+
 // On update: render the UI
 fn render_ui(
     mut contexts: EguiContexts,
     mut windows: Query<&mut Window>,
     mut ui_state: ResMut<UiState>,
     mut open_windows: ResMut<OpenWindows>,
-    asset_server: Res<AssetServer>,
     keys: Res<Input<KeyCode>>,
 ) {
     let window = windows.single_mut();
@@ -114,11 +184,8 @@ fn render_ui(
 
     let ctx = contexts.ctx_mut();
 
-    if keys.just_pressed(KeyCode::Space) {
-    }
-    if keys.pressed(KeyCode::W) {
-
-    }
+    if keys.just_pressed(KeyCode::Space) {}
+    if keys.pressed(KeyCode::W) {}
 
     egui::Window::new("Login")
         .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::new(0., 0.))
@@ -148,13 +215,13 @@ fn render_ui(
                 ui.add_space(window_height / 28.);
 
                 // The text inputs
-                let username = egui::TextEdit::singleline(&mut ui_state.username)
+                egui::TextEdit::singleline(&mut ui_state.username)
                     .hint_text("Username")
                     .margin(egui::vec2(10., 10.))
                     .desired_width(window_width / 4.)
                     .show(ui);
 
-                let password = egui::TextEdit::singleline(&mut ui_state.password)
+                egui::TextEdit::singleline(&mut ui_state.password)
                     .password(true)
                     .margin(egui::vec2(10., 10.))
                     .hint_text("Password")
@@ -164,7 +231,7 @@ fn render_ui(
                 // Manually add some space between the text inputs and the 'confirm' button
                 ui.add_space(window_height / 26.);
 
-                let button = ui.add(egui::Button::new("Confirm").fill(black));
+                ui.add(egui::Button::new("Confirm").fill(black));
 
                 // Manually add some space between the button and the bottom border of the
                 // window...for scaling purposes
