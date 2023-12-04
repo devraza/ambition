@@ -1,4 +1,4 @@
-use bevy::{prelude::*};
+use bevy::prelude::*;
 
 // Define the player component
 #[derive(Component)]
