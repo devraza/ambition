@@ -1,4 +1,4 @@
-use bevy::{core_pipeline::tonemapping::Tonemapping, prelude::*, window::*, winit::WinitSettings};
+use bevy::{core_pipeline::tonemapping::Tonemapping, prelude::*, window::*};
 
 use bevy_egui::EguiPlugin;
 
@@ -54,8 +54,6 @@ fn main() {
         ))
         .init_resource::<UiState>()
         .init_resource::<OpenWindows>()
-        // Only run the app when there is user input, reducing resource usage
-        .insert_resource(WinitSettings::desktop_app())
         .add_systems(Startup, (setup, setup_ui))
         .add_systems(Update, (render_ui, movement))
         .run();
@@ -73,12 +71,23 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
     commands.spawn((
         SpriteBundle {
-            texture: asset_server.load("player/player.png"),
+            texture: asset_server.load("player/player-4x.png"),
+            transform: Transform {
+                scale: Vec3::splat(0.2),
+                ..default()
+            },
             ..default()
         },
         Player {
-            movement_speed: 1024.,
+            movement_speed: 512.,
             rotation_speed: f32::to_radians(360.),
+
+            health: 0.4,
+            health_max: 10.,
+            stamina: 0.1,
+            stamina_max: 10.,
+
+            defence: 40.,
         },
     ));
 }
