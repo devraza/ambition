@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 
 use crate::HYPERNOVA;
+use crate::Player;
 
 // Define UI resources
 #[derive(Default, Resource)]
@@ -38,7 +39,11 @@ pub fn render_ui(
     mut windows: Query<&mut Window>,
     mut ui_state: ResMut<UiState>,
     mut open_windows: ResMut<OpenWindows>,
+    mut query: Query<&Player>,
 ) {
+    // Query the player information and put it into scope
+    let player = query.single_mut();
+
     let window = windows.single_mut();
     let window_width = window.resolution.width();
     let window_height = window.resolution.height();
@@ -95,5 +100,19 @@ pub fn render_ui(
                 // window...for scaling purposes
                 ui.add_space(window_height / 22.);
             });
+        });
+    egui::CentralPanel::default()
+        .frame(egui::containers::Frame {
+            fill: egui::Color32::TRANSPARENT,
+            inner_margin: egui::style::Margin::same(10.),
+            ..default()
+        })
+        .show(ctx, |ui| {
+            let health = egui::widgets::ProgressBar::new(player.health)
+                .desired_width(window_width / 10.);
+            let defence = egui::widgets::ProgressBar::new(player.defence)
+                .desired_width(window_width / 10.);
+            ui.add(health);
+            ui.add(defence);
         });
 }
