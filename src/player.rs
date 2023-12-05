@@ -74,10 +74,8 @@ pub fn movement(
         movement_distance = blink_factor * player.movement_speed * 0.01;
     }
 
-    // Create the translation using the movement direction and distance
-    let translation_delta = movement_direction * movement_distance;
-    // Update the player translation with the created translation
-    transform.translation += translation_delta;
+    // Update the player translation with the translation
+    transform.translation += movement_direction * movement_distance;
 
     // Define the bounds of play (the window size)
     let window = windows.single_mut();

@@ -50,6 +50,12 @@ pub fn render_ui(
 
     let ctx = contexts.ctx_mut();
 
+    let purple = HYPERNOVA.get("PURPLE").unwrap();
+    let purple = egui::Color32::from_rgb(purple.0, purple.1, purple.2);
+
+    let black = HYPERNOVA.get("BLACK").unwrap();
+    let black = egui::Color32::from_rgb(black.0, black.1, black.2);
+
     egui::Window::new("Login")
         .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::new(0., 0.))
         .resizable(false)
@@ -60,12 +66,6 @@ pub fn render_ui(
             ui.set_height(window_height / 3.);
 
             ui.with_layout(egui::Layout::top_down(egui::Align::Center), |ui| {
-                let purple = HYPERNOVA.get("PURPLE").unwrap();
-                let purple = egui::Color32::from_rgb(purple.0, purple.1, purple.2);
-
-                let black = HYPERNOVA.get("BLACK").unwrap();
-                let black = egui::Color32::from_rgb(black.0, black.1, black.2);
-
                 // Define spacing between items (widgets) and add manually add some space
                 // between the window border and the heading
                 ui.spacing_mut().item_spacing = egui::vec2(0., 10.);
@@ -108,11 +108,24 @@ pub fn render_ui(
             ..default()
         })
         .show(ctx, |ui| {
+            ui.visuals_mut().menu_rounding = egui::Rounding::ZERO;
+            ui.visuals_mut().selection.bg_fill = purple;
+
             let health = egui::widgets::ProgressBar::new(player.health)
                 .desired_width(window_width / 10.);
-            let defence = egui::widgets::ProgressBar::new(player.defence)
+            let stamina = egui::widgets::ProgressBar::new(player.stamina)
                 .desired_width(window_width / 10.);
-            ui.add(health);
-            ui.add(defence);
+
+            egui::Grid::new("Stats")
+                .spacing(egui::Vec2::new(20., 10.))
+                .show(ui, |ui| {
+                    ui.label(egui::RichText::new("Health").color(purple));
+                    ui.add(health);
+                    ui.end_row();
+
+                    ui.label(egui::RichText::new("Stamina").color(purple));
+                    ui.add(stamina);
+                    ui.end_row();
+                });
         });
 }
