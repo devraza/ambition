@@ -18,10 +18,9 @@ pub struct Player {
 pub fn movement(
     time: Res<Time>,
     keys: Res<Input<KeyCode>>,
-    mut windows: Query<&mut Window>,
-    mut query: Query<(&Player, &mut Transform)>,
+    mut player: Query<(&Player, &mut Transform)>,
 ) {
-    let (player, mut transform) = query.single_mut();
+    let (player, mut transform) = player.single_mut();
 
     let mut rotation_factor = 0.;
     let mut movement_factor = 0.;
@@ -31,13 +30,13 @@ pub fn movement(
         movement_factor += 1.;
     } else if keys.pressed(KeyCode::S) {
         movement_factor -= 1.;
-    } 
+    }
 
     if keys.pressed(KeyCode::A) {
         rotation_factor += 1.;
     } else if keys.pressed(KeyCode::D) {
         rotation_factor -= 1.;
-    } 
+    }
 
     if keys.pressed(KeyCode::Space) {
         blink_factor += 4.;
@@ -76,12 +75,18 @@ pub fn movement(
 
     // Update the player translation with the translation
     transform.translation += movement_direction * movement_distance;
+}
 
-    // Define the bounds of play (the window size)
-    let window = windows.single_mut();
-    let bounds = Vec3::from((
-        Vec2::new(window.resolution.width(), window.resolution.height()) / 2.,
-        0.,
-    ));
-    transform.translation = transform.translation.min(bounds).max(-bounds);
+// Function to make the camera follow the plaeyr
+pub fn camera_follow(
+    mut player: Query<(&Player, &mut Transform)>,
+    mut cameras: Query<&mut Transform, (With<Camera>, Without<Player>)>,
+) {
+    let (_, transform) = player.single_mut();
+    let pos = transform.translation;
+
+    for mut camera_transform in &mut cameras {
+        camera_transform.translation.x = pos.x;
+        camera_transform.translation.y = pos.y;
+    }
 }

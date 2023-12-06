@@ -55,7 +55,7 @@ fn main() {
         .init_resource::<UiState>()
         .init_resource::<OpenWindows>()
         .add_systems(Startup, (setup, setup_ui))
-        .add_systems(Update, (render_ui, movement))
+        .add_systems(Update, (render_ui, movement, camera_follow))
         .run();
 }
 
@@ -68,6 +68,15 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
         tonemapping: Tonemapping::TonyMcMapface,
         ..default()
+    });
+    commands.spawn(
+        SpriteBundle {
+            texture: asset_server.load("player/player-4x.png"),
+            transform: Transform {
+                scale: Vec3::splat(0.2),
+                ..default()
+            },
+            ..default()
     });
     commands.spawn((
         SpriteBundle {
