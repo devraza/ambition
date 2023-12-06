@@ -39,10 +39,10 @@ pub fn render_ui(
     mut windows: Query<&mut Window>,
     mut ui_state: ResMut<UiState>,
     mut open_windows: ResMut<OpenWindows>,
-    mut query: Query<&Player>,
+    mut player_query: Query<&mut Player, With<Player>>,
 ) {
     // Query the player information and put it into scope
-    let player = query.single_mut();
+    let player = player_query.single_mut();
 
     let window = windows.single_mut();
     let window_width = window.resolution.width();
@@ -101,6 +101,7 @@ pub fn render_ui(
                 ui.add_space(window_height / 22.);
             });
         });
+
     egui::CentralPanel::default()
         .frame(egui::containers::Frame {
             fill: egui::Color32::TRANSPARENT,
@@ -111,20 +112,28 @@ pub fn render_ui(
             ui.visuals_mut().menu_rounding = egui::Rounding::ZERO;
             ui.visuals_mut().selection.bg_fill = purple;
 
-            let health =
-                egui::widgets::ProgressBar::new(player.health).desired_width(window_width / 10.);
-            let stamina =
-                egui::widgets::ProgressBar::new(player.stamina).desired_width(window_width / 10.);
-
+            // Show player stats
             egui::Grid::new("Stats")
                 .spacing(egui::Vec2::new(20., 10.))
                 .show(ui, |ui| {
+                    let health_bar = egui::widgets::ProgressBar::new(player.health)
+                        .desired_width(window_width / 10.);
+                    let mut stamina_bar = egui::widgets::ProgressBar::new(player.stamina)
+                        .desired_width(window_width / 10.);
+
+                    // Show the stamina bar to be empty if the player has no stamina
+                    if player.stamina <= 0. {
+                        stamina_bar =
+                            stamina_bar.fill(egui::Color32::from_rgba_unmultiplied(0, 0, 0, 0));
+                    };
+
+                    // Show the progress bars!
                     ui.label(egui::RichText::new("Health").color(purple));
-                    ui.add(health);
+                    ui.add(health_bar);
                     ui.end_row();
 
                     ui.label(egui::RichText::new("Stamina").color(purple));
-                    ui.add(stamina);
+                    ui.add(stamina_bar);
                     ui.end_row();
                 });
         });

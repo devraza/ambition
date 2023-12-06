@@ -55,12 +55,22 @@ fn main() {
         .init_resource::<UiState>()
         .init_resource::<OpenWindows>()
         .add_systems(Startup, (setup, setup_ui))
-        .add_systems(Update, (render_ui, movement, camera_follow))
+        .add_systems(Update, (render_ui, movement, camera_follow, player_regen))
         .run();
 }
 
 // Bevy engine setup
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(SpriteBundle {
+        texture: asset_server.load("player/player-4x.png"),
+        transform: Transform {
+            scale: Vec3::splat(0.2),
+            ..default()
+        },
+        ..default()
+    });
+
+    // Spawn the 2D camera
     commands.spawn(Camera2dBundle {
         camera: Camera {
             hdr: true,
@@ -69,34 +79,26 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         tonemapping: Tonemapping::TonyMcMapface,
         ..default()
     });
-    commands.spawn(
-        SpriteBundle {
+
+    // Spawn the player
+    commands
+        .spawn(SpriteBundle {
             texture: asset_server.load("player/player-4x.png"),
             transform: Transform {
                 scale: Vec3::splat(0.2),
                 ..default()
             },
             ..default()
-    });
-    commands.spawn((
-        SpriteBundle {
-            texture: asset_server.load("player/player-4x.png"),
-            transform: Transform {
-                scale: Vec3::splat(0.2),
-                ..default()
-            },
-            ..default()
-        },
-        Player {
+        })
+        .insert(Player {
             movement_speed: 512.,
             rotation_speed: f32::to_radians(360.),
 
-            health: 10.,
+            health: 1.,
             health_max: 10.,
-            stamina: 10.,
+            stamina: 1.,
             stamina_max: 10.,
 
             defence: 40.,
-        },
-    ));
+        });
 }
