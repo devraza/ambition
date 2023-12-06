@@ -18,13 +18,25 @@ pub struct Player {
 pub fn movement(
     time: Res<Time>,
     keys: Res<Input<KeyCode>>,
-    mut player: Query<(&Player, &mut Transform)>,
+    mut player_query: Query<(&mut Player, &mut Transform), With<Player>>,
 ) {
-    let (player, mut transform) = player.single_mut();
+    let (mut player, mut transform) = player_query.single_mut();
 
     let mut rotation_factor = 0.;
     let mut movement_factor = 0.;
-    let mut blink_factor = 0.;
+
+   let mut lock: bool = false;
+
+    if keys.pressed(KeyCode::Space) && lock == false {
+        lock = true;
+        movement_factor = 5.;
+        if player.stamina > 0. {
+            player.stamina -= 0.05;
+        }
+        if player.stamina < 0. {
+            player.stamina = 0.;
+        }
+    }
 
     if keys.pressed(KeyCode::W) {
         movement_factor += 1.;
@@ -38,9 +50,8 @@ pub fn movement(
         rotation_factor -= 1.;
     }
 
-    if keys.pressed(KeyCode::Space) {
-        blink_factor += 4.;
-    }
+    // Initialise the movement distance variable (to bring it into scope)
+    let movement_distance: f32;
 
     if keys.pressed(KeyCode::Up) {
         transform.rotation = Quat::from_rotation_z((0_f32).to_radians());
@@ -62,15 +73,12 @@ pub fn movement(
     // Get the player's *forward* vector
     let movement_direction = transform.rotation * Vec3::Y;
 
-    // Initialise the movement distance variable (to bring it into scope)
-    let movement_distance: f32;
-
-    if blink_factor == 0. {
+    if lock != true {
         movement_distance = movement_factor * player.movement_speed * time.delta_seconds();
         // Change the player rotation around the Z-axis only if not blinking
         transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
     } else {
-        movement_distance = blink_factor * player.movement_speed * 0.01;
+        movement_distance = player.stamina * movement_factor * player.movement_speed * time.delta_seconds();
     }
 
     // Update the player translation with the translation
@@ -88,5 +96,17 @@ pub fn camera_follow(
     for mut camera_transform in &mut cameras {
         camera_transform.translation.x = pos.x;
         camera_transform.translation.y = pos.y;
+    }
+}
+
+pub fn player_regen(mut player_query: Query<&mut Player, With<Player>>, time: Res<Time>) {
+    let mut player = player_query.single_mut();
+    if player.stamina < 1. {
+        if player.stamina < 0. {
+            player.stamina = 0.;
+            player.stamina += 0.1 * time.delta_seconds();
+        } else {
+            player.stamina += 0.1 * time.delta_seconds();
+        }
     }
 }
