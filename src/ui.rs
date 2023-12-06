@@ -2,8 +2,8 @@ use bevy::prelude::*;
 
 use bevy_egui::{egui, EguiContexts};
 
-use crate::HYPERNOVA;
 use crate::Player;
+use crate::HYPERNOVA;
 
 // Define UI resources
 #[derive(Default, Resource)]
@@ -111,10 +111,10 @@ pub fn render_ui(
             ui.visuals_mut().menu_rounding = egui::Rounding::ZERO;
             ui.visuals_mut().selection.bg_fill = purple;
 
-            let health = egui::widgets::ProgressBar::new(player.health)
-                .desired_width(window_width / 10.);
-            let stamina = egui::widgets::ProgressBar::new(player.stamina)
-                .desired_width(window_width / 10.);
+            let health =
+                egui::widgets::ProgressBar::new(player.health).desired_width(window_width / 10.);
+            let stamina =
+                egui::widgets::ProgressBar::new(player.stamina).desired_width(window_width / 10.);
 
             egui::Grid::new("Stats")
                 .spacing(egui::Vec2::new(20., 10.))
