@@ -38,21 +38,18 @@ pub fn movement(
         rotation_factor -= 1.;
     }
 
-    if keys.pressed(KeyCode::Space) && player.is_dashing == false {
-        player.is_dashing = true;
-        movement_factor = 5.;
-        if player.stamina > 0. {
-            player.stamina -= 0.025;
-        }
-        if player.stamina < 0. {
-            player.stamina = 0.;
+    // Initialise the movement distance variable (to bring it into scope)
+    let mut movement_distance: f32 = 0.;
+
+    let mut dashing = false;
+
+    if keys.just_pressed(KeyCode::Space) {
+        if player.stamina >= 0.3 {
+            dashing = true;
+            player.stamina -= 0.3;
+            movement_distance = 256.;
         }
     }
-
-
-
-    // Initialise the movement distance variable (to bring it into scope)
-    let movement_distance: f32;
 
     if keys.pressed(KeyCode::Left) {
         transform.rotation = Quat::from_rotation_z((90_f32).to_radians());
@@ -73,13 +70,11 @@ pub fn movement(
     // Get the player's *forward* vector
     let movement_direction = transform.rotation * Vec3::Y;
 
-    if player.is_dashing == true {
-        movement_distance = movement_factor * player.movement_speed * time.delta_seconds();
-        // Change the player rotation around the Z-axis only if not dashing
-        transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
+    if dashing == false {
+    movement_distance = movement_factor * player.movement_speed * time.delta_seconds();
+    // Change the player rotation around the Z-axis only if not dashing
+    transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
     } else {
-        movement_distance = player.stamina * movement_factor * player.movement_speed * time.delta_seconds();
-        player.is_dashing = false;
     }
 
     // Update the player translation with the translation
@@ -104,10 +99,6 @@ pub fn player_regen(mut player_query: Query<&mut Player, With<Player>>, time: Re
     let mut player = player_query.single_mut();
     println!("{}", player.stamina);
     if player.stamina < 1. {
-        if player.stamina < 0. {
-            player.stamina += 0.1 * time.delta_seconds();
-        } else {
-            player.stamina += 0.1 * time.delta_seconds();
-        }
+        player.stamina += 0.1 * time.delta_seconds();
     }
 }
