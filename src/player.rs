@@ -41,14 +41,10 @@ pub fn movement(
     // Initialise the movement distance variable (to bring it into scope)
     let mut movement_distance: f32 = 0.;
 
-    let mut dashing = false;
-
-    if keys.just_pressed(KeyCode::Space) {
-        if player.stamina >= 0.3 {
-            dashing = true;
-            player.stamina -= 0.3;
-            movement_distance = 256.;
-        }
+    if keys.just_pressed(KeyCode::Space) && player.stamina >= 0.3 {
+        player.is_dashing = true;
+        player.stamina -= 0.3;
+        movement_distance = 256.;
     }
 
     if keys.pressed(KeyCode::Left) {
@@ -70,11 +66,10 @@ pub fn movement(
     // Get the player's *forward* vector
     let movement_direction = transform.rotation * Vec3::Y;
 
-    if dashing == false {
-    movement_distance = movement_factor * player.movement_speed * time.delta_seconds();
-    // Change the player rotation around the Z-axis only if not dashing
-    transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
-    } else {
+    if !player.is_dashing {
+        movement_distance = movement_factor * player.movement_speed * time.delta_seconds();
+        // Change the player rotation around the Z-axis only if not dashing
+        transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
     }
 
     // Update the player translation with the translation
