@@ -61,7 +61,7 @@ pub fn movement(
     } else if keys.pressed(KeyCode::Down) {
         transform.rotation = Quat::from_rotation_z((180_f32).to_radians());
         movement_factor = 1.;
-    } 
+    }
 
     // Get the player's *forward* vector
     let movement_direction = transform.rotation * Vec3::Y;
