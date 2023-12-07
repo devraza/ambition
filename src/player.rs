@@ -91,7 +91,6 @@ pub fn camera_follow(
 
 pub fn player_regen(mut player_query: Query<&mut Player, With<Player>>, time: Res<Time>) {
     let mut player = player_query.single_mut();
-    println!("{}", player.stamina);
     if player.stamina < 1. {
         player.stamina += 0.1 * time.delta_seconds();
     }
