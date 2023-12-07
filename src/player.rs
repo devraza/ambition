@@ -10,10 +10,6 @@ pub struct Player {
     pub health_max: f32,
     pub stamina: f32,
     pub stamina_max: f32,
-
-    pub defence: f32,
-
-    pub is_dashing: bool,
 }
 
 // Define the player movement system
@@ -40,9 +36,12 @@ pub fn movement(
 
     // Initialise the movement distance variable (to bring it into scope)
     let mut movement_distance: f32 = 0.;
+    // Player is not dashing by default
+    let mut is_dashing = false;
 
+    // Dash on space key press if the player has the stamina
     if keys.just_pressed(KeyCode::Space) && player.stamina >= 0.3 {
-        player.is_dashing = true;
+        is_dashing = true;
         player.stamina -= 0.3;
         movement_distance = 256.;
     }
@@ -66,7 +65,7 @@ pub fn movement(
     // Get the player's *forward* vector
     let movement_direction = transform.rotation * Vec3::Y;
 
-    if !player.is_dashing {
+    if !is_dashing {
         movement_distance = movement_factor * player.movement_speed * time.delta_seconds();
         // Change the player rotation around the Z-axis only if not dashing
         transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
