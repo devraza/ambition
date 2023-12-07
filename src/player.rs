@@ -12,6 +12,8 @@ pub struct Player {
     pub stamina_max: f32,
 
     pub defence: f32,
+
+    pub is_dashing: bool,
 }
 
 // Define the player movement system
@@ -25,60 +27,59 @@ pub fn movement(
     let mut rotation_factor = 0.;
     let mut movement_factor = 0.;
 
-   let mut lock: bool = false;
-
-    if keys.pressed(KeyCode::Space) && lock == false {
-        lock = true;
-        movement_factor = 5.;
-        if player.stamina > 0. {
-            player.stamina -= 0.05;
-        }
-        if player.stamina < 0. {
-            player.stamina = 0.;
-        }
-    }
-
     if keys.pressed(KeyCode::W) {
         movement_factor += 1.;
     } else if keys.pressed(KeyCode::S) {
         movement_factor -= 1.;
     }
-
     if keys.pressed(KeyCode::A) {
         rotation_factor += 1.;
     } else if keys.pressed(KeyCode::D) {
         rotation_factor -= 1.;
     }
 
+    if keys.pressed(KeyCode::Space) && player.is_dashing == false {
+        player.is_dashing = true;
+        movement_factor = 5.;
+        if player.stamina > 0. {
+            player.stamina -= 0.025;
+        }
+        if player.stamina < 0. {
+            player.stamina = 0.;
+        }
+    }
+
+
+
     // Initialise the movement distance variable (to bring it into scope)
     let movement_distance: f32;
 
-    if keys.pressed(KeyCode::Up) {
-        transform.rotation = Quat::from_rotation_z((0_f32).to_radians());
-        movement_factor = 1.;
-    }
-    if keys.pressed(KeyCode::Down) {
-        transform.rotation = Quat::from_rotation_z((180_f32).to_radians());
-        movement_factor = 1.;
-    }
     if keys.pressed(KeyCode::Left) {
         transform.rotation = Quat::from_rotation_z((90_f32).to_radians());
         movement_factor = 1.;
-    }
-    if keys.pressed(KeyCode::Right) {
+    } else if keys.pressed(KeyCode::Right) {
         transform.rotation = Quat::from_rotation_z((270_f32).to_radians());
         movement_factor = 1.;
     }
 
+    if keys.pressed(KeyCode::Up) {
+        transform.rotation = Quat::from_rotation_z((0_f32).to_radians());
+        movement_factor = 1.;
+    } else if keys.pressed(KeyCode::Down) {
+        transform.rotation = Quat::from_rotation_z((180_f32).to_radians());
+        movement_factor = 1.;
+    } 
+
     // Get the player's *forward* vector
     let movement_direction = transform.rotation * Vec3::Y;
 
-    if lock != true {
+    if player.is_dashing == true {
         movement_distance = movement_factor * player.movement_speed * time.delta_seconds();
-        // Change the player rotation around the Z-axis only if not blinking
+        // Change the player rotation around the Z-axis only if not dashing
         transform.rotate_z(rotation_factor * player.rotation_speed * time.delta_seconds());
     } else {
         movement_distance = player.stamina * movement_factor * player.movement_speed * time.delta_seconds();
+        player.is_dashing = false;
     }
 
     // Update the player translation with the translation
@@ -101,9 +102,9 @@ pub fn camera_follow(
 
 pub fn player_regen(mut player_query: Query<&mut Player, With<Player>>, time: Res<Time>) {
     let mut player = player_query.single_mut();
+    println!("{}", player.stamina);
     if player.stamina < 1. {
         if player.stamina < 0. {
-            player.stamina = 0.;
             player.stamina += 0.1 * time.delta_seconds();
         } else {
             player.stamina += 0.1 * time.delta_seconds();

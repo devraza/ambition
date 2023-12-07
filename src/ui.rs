@@ -123,8 +123,7 @@ pub fn render_ui(
 
                     // Show the stamina bar to be empty if the player has no stamina
                     if player.stamina <= 0. {
-                        stamina_bar =
-                            stamina_bar.fill(egui::Color32::from_rgba_unmultiplied(0, 0, 0, 0));
+                        stamina_bar = stamina_bar.fill(egui::Color32::from_rgba_unmultiplied(0, 0, 0, 0));
                     };
 
                     // Show the progress bars!

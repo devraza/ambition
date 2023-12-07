@@ -100,5 +100,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             stamina_max: 10.,
 
             defence: 40.,
+
+            is_dashing: false,
         });
 }
