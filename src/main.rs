@@ -98,9 +98,5 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             health_max: 10.,
             stamina: 1.,
             stamina_max: 10.,
-
-            defence: 40.,
-
-            is_dashing: false,
         });
 }
