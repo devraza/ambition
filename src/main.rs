@@ -19,7 +19,7 @@ const PKGNAME: &str = env!("CARGO_PKG_NAME");
 
 // Create a map of the Hypernova colorscheme
 lazy_static! {
-    static ref HYPERNOVA: HashMap<&'static str, (u8, u8, u8)> = vec![
+    static ref KAGAYAKI: HashMap<&'static str, (u8, u8, u8)> = vec![
         ("BLACK", (13, 13, 15)),
         ("DARK_GRAY", (21, 21, 23)),
         ("GRAY", (39, 39, 43)),

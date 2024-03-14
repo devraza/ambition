@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContexts};
 
 use crate::Player;
-use crate::HYPERNOVA;
+use crate::KAGAYAKI;
 
 // Define UI resources
 #[derive(Default, Resource)]
@@ -50,10 +50,10 @@ pub fn render_ui(
 
     let ctx = contexts.ctx_mut();
 
-    let purple = HYPERNOVA.get("PURPLE").unwrap();
+    let purple = KAGAYAKI.get("PURPLE").unwrap();
     let purple = egui::Color32::from_rgb(purple.0, purple.1, purple.2);
 
-    let black = HYPERNOVA.get("BLACK").unwrap();
+    let black = KAGAYAKI.get("BLACK").unwrap();
     let black = egui::Color32::from_rgb(black.0, black.1, black.2);
 
     egui::Window::new("Login")
