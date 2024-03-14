@@ -15,7 +15,7 @@ pub struct Player {
 // Define the player movement system
 pub fn movement(
     time: Res<Time>,
-    keys: Res<Input<KeyCode>>,
+    keys: Res<ButtonInput<KeyCode>>,
     mut player_query: Query<(&mut Player, &mut Transform), With<Player>>,
 ) {
     let (mut player, mut transform) = player_query.single_mut();
@@ -23,14 +23,14 @@ pub fn movement(
     let mut rotation_factor = 0.;
     let mut movement_factor = 0.;
 
-    if keys.pressed(KeyCode::W) {
+    if keys.pressed(KeyCode::KeyW) {
         movement_factor += 1.;
-    } else if keys.pressed(KeyCode::S) {
+    } else if keys.pressed(KeyCode::KeyS) {
         movement_factor -= 1.;
     }
-    if keys.pressed(KeyCode::A) {
+    if keys.pressed(KeyCode::KeyA) {
         rotation_factor += 1.;
-    } else if keys.pressed(KeyCode::D) {
+    } else if keys.pressed(KeyCode::KeyD) {
         rotation_factor -= 1.;
     }
 
@@ -46,18 +46,18 @@ pub fn movement(
         movement_distance = 256.;
     }
 
-    if keys.pressed(KeyCode::Left) {
+    if keys.pressed(KeyCode::ArrowLeft) {
         transform.rotation = Quat::from_rotation_z((90_f32).to_radians());
         movement_factor = 1.;
-    } else if keys.pressed(KeyCode::Right) {
+    } else if keys.pressed(KeyCode::ArrowRight) {
         transform.rotation = Quat::from_rotation_z((270_f32).to_radians());
         movement_factor = 1.;
     }
 
-    if keys.pressed(KeyCode::Up) {
+    if keys.pressed(KeyCode::ArrowUp) {
         transform.rotation = Quat::from_rotation_z((0_f32).to_radians());
         movement_factor = 1.;
-    } else if keys.pressed(KeyCode::Down) {
+    } else if keys.pressed(KeyCode::ArrowDown) {
         transform.rotation = Quat::from_rotation_z((180_f32).to_radians());
         movement_factor = 1.;
     }

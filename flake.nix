@@ -54,6 +54,7 @@
             pkgs.vulkan-loader
             pkgs.udev
             pkgs.alsa-lib
+            pkgs.libxkbcommon
           ]}"'';
           # Use nightly cargo & rustc provided by fenix. Add for packages for the dev shell here
           buildInputs = with pkgs; [
@@ -61,7 +62,7 @@
               cargo rustc rust-src clippy rustfmt # rust components
             ])
             xorg.libX11 xorg.libXcursor xorg.libXi xorg.libXrandr # To use the x11 feature
-            libxkbcommon wayland # To use the wayland feature
+            libxkbcommon # To use the wayland feature
 
             udev alsa-lib vulkan-loader
             pkgs.nixgl.nixVulkanIntel
