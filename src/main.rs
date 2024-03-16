@@ -55,7 +55,7 @@ fn main() {
         .init_resource::<UiState>()
         .init_resource::<OpenWindows>()
         .add_systems(Startup, (setup, setup_ui))
-        .add_systems(Update, (render_ui, movement, camera_follow, player_regen))
+        .add_systems(Update, (render_ui, movement, camera_follow, player_regen, attack))
         .run();
 }
 
