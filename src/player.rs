@@ -12,6 +12,13 @@ pub struct Player {
     pub stamina_max: f32,
 }
 
+// Define the attacking component
+#[derive(Component)]
+pub struct Attack {
+    pub velocity: f32,
+    pub damage: f32,
+}
+
 // Define the player movement system
 pub fn movement(
     time: Res<Time>,
@@ -46,22 +53,6 @@ pub fn movement(
         movement_distance = 256.;
     }
 
-    if keys.pressed(KeyCode::ArrowLeft) {
-        transform.rotation = Quat::from_rotation_z((90_f32).to_radians());
-        movement_factor = 1.;
-    } else if keys.pressed(KeyCode::ArrowRight) {
-        transform.rotation = Quat::from_rotation_z((270_f32).to_radians());
-        movement_factor = 1.;
-    }
-
-    if keys.pressed(KeyCode::ArrowUp) {
-        transform.rotation = Quat::from_rotation_z((0_f32).to_radians());
-        movement_factor = 1.;
-    } else if keys.pressed(KeyCode::ArrowDown) {
-        transform.rotation = Quat::from_rotation_z((180_f32).to_radians());
-        movement_factor = 1.;
-    }
-
     // Get the player's *forward* vector
     let movement_direction = transform.rotation * Vec3::Y;
 
@@ -73,6 +64,40 @@ pub fn movement(
 
     // Update the player translation with the translation
     transform.translation += movement_direction * movement_distance;
+}
+
+pub fn attack(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut set: ParamSet<(
+        Query<&mut Transform, With<Attack>>,
+        Query<&Transform, With<Player>>
+    )>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
+    for player_transform in set.p1().iter_mut() {
+        if keys.just_pressed(KeyCode::Enter) {
+     commands
+        .spawn(SpriteBundle {
+            texture: asset_server.load("player/player-4x.png"),
+            transform: Transform {
+                scale: Vec3::splat(0.1),
+                translation: player_transform.translation,
+                rotation: player_transform.rotation,
+            },
+            ..default()
+        })
+        .insert(Attack {
+            velocity: 10.,
+            damage: 20.,
+        });
+    }
+    }
+
+    for mut attack_transform in set.p0().iter_mut() {
+        let direction = attack_transform.rotation * Vec3::Y;
+        attack_transform.translation += direction * 10.;
+    }
 }
 
 // Function to make the camera follow the plaeyr
