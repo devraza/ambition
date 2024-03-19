@@ -75,14 +75,17 @@ pub fn attack(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
+
     for player_transform in set.p1().iter_mut() {
+        let attack_position = player_transform.translation + ((player_transform.rotation * Vec3::Y) * 50.);
+
         if keys.just_pressed(KeyCode::Enter) {
      commands
         .spawn(SpriteBundle {
-            texture: asset_server.load("player/player-4x.png"),
+            texture: asset_server.load("attacks/stone_cannon.png"),
             transform: Transform {
-                scale: Vec3::splat(0.1),
-                translation: player_transform.translation,
+                scale: Vec3::splat(0.2),
+                translation: attack_position,
                 rotation: player_transform.rotation,
             },
             ..default()
@@ -96,7 +99,7 @@ pub fn attack(
 
     for mut attack_transform in set.p0().iter_mut() {
         let direction = attack_transform.rotation * Vec3::Y;
-        attack_transform.translation += direction * 10.;
+        attack_transform.translation += direction * 20.;
     }
 }
 
