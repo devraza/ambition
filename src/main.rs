@@ -1,4 +1,5 @@
 use bevy::{core_pipeline::tonemapping::Tonemapping, prelude::*, window::*};
+use bevy_hanabi::prelude::*;
 
 use bevy_egui::EguiPlugin;
 
@@ -51,6 +52,7 @@ fn main() {
                 ..default()
             }),
             EguiPlugin,
+            HanabiPlugin,
         ))
         .init_resource::<UiState>()
         .init_resource::<OpenWindows>()

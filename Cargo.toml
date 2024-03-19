@@ -17,4 +17,5 @@ opt-level = 3
 [dependencies]
 bevy = { version = "0.13.0" }
 bevy_egui = "0.25.0"
+bevy_hanabi = "0.10.0"
 lazy_static = "1.4.0"
