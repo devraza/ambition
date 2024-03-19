@@ -10,6 +10,8 @@ pub struct Player {
     pub health_max: f32,
     pub stamina: f32,
     pub stamina_max: f32,
+    pub mana: f32,
+    pub mana_max: f32,
 }
 
 // Define the attacking component
@@ -47,9 +49,9 @@ pub fn movement(
     let mut is_dashing = false;
 
     // Dash on space key press if the player has the stamina
-    if keys.just_pressed(KeyCode::Space) && player.stamina >= 0.3 {
+    if keys.just_pressed(KeyCode::Space) && player.stamina >= 1. {
         is_dashing = true;
-        player.stamina -= 0.3;
+        player.stamina -= 1.;
         movement_distance = 256.;
     }
 
@@ -72,19 +74,21 @@ pub fn attack(
         Query<&mut Transform, With<Attack>>,
         Query<&Transform, With<Player>>
     )>,
+    mut player_query: Query<&mut Player>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
+    let mut player = player_query.single_mut();
 
     for player_transform in set.p1().iter_mut() {
-        let attack_position = player_transform.translation + ((player_transform.rotation * Vec3::Y) * 50.);
+        let attack_position = player_transform.translation + ((player_transform.rotation * Vec3::Y) * 100.);
 
         if keys.just_pressed(KeyCode::Enter) {
      commands
         .spawn(SpriteBundle {
             texture: asset_server.load("attacks/stone_cannon.png"),
             transform: Transform {
-                scale: Vec3::splat(0.2),
+                scale: Vec3::splat(0.3),
                 translation: attack_position,
                 rotation: player_transform.rotation,
             },
@@ -94,6 +98,8 @@ pub fn attack(
             velocity: 10.,
             damage: 20.,
         });
+
+        player.mana -= 1.;
     }
     }
 
@@ -119,7 +125,7 @@ pub fn camera_follow(
 
 pub fn player_regen(mut player_query: Query<&mut Player, With<Player>>, time: Res<Time>) {
     let mut player = player_query.single_mut();
-    if player.stamina < 1. {
+    if (player.stamina / player.stamina_max) < 1. {
         player.stamina += 0.1 * time.delta_seconds();
     }
 }
