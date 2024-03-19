@@ -13,4 +13,4 @@ Ambition is a fast-paced, textual 2D multiplayer role-playing game written in Ru
 - [Adam Khan](https://github.com/krasket) - (Former) UI/UX designer, and current playtester
 
 ## License
-See the [LICENSE](LICENSE) for a copy of the Apache License 2.0
+See the [LICENSE](LICENSE) for a copy of the MIT License.
