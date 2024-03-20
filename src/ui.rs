@@ -56,12 +56,6 @@ pub fn render_ui(
     let black = KAGAYAKI.get("BLACK").unwrap();
     let black = egui::Color32::from_rgb(black.0, black.1, black.2);
 
-    let blue = KAGAYAKI.get("BLUE").unwrap();
-    let blue = egui::Color32::from_rgb(blue.0, blue.1, blue.2);
-
-    let yellow = KAGAYAKI.get("YELLOW").unwrap();
-    let yellow = egui::Color32::from_rgb(yellow.0, yellow.1, yellow.2);
-
     egui::Window::new("Login")
         .anchor(egui::Align2::CENTER_CENTER, egui::Vec2::new(0., 0.))
         .resizable(false)
@@ -141,11 +135,11 @@ pub fn render_ui(
                     ui.add(health_bar);
                     ui.end_row();
 
-                    ui.label(egui::RichText::new("Stamina").color(yellow));
+                    ui.label(egui::RichText::new("Stamina").color(purple));
                     ui.add(stamina_bar);
                     ui.end_row();
 
-                    ui.label(egui::RichText::new("Mana").color(blue));
+                    ui.label(egui::RichText::new("Mana").color(purple));
                     ui.add(mana_bar);
                     ui.end_row();
                 });
