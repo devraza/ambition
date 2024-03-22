@@ -72,7 +72,7 @@ pub fn attack(
     keys: Res<ButtonInput<KeyCode>>,
     mut set: ParamSet<(
         Query<&mut Transform, With<Attack>>,
-        Query<&Transform, With<Player>>
+        Query<&Transform, With<Player>>,
     )>,
     mut player_query: Query<&mut Player>,
     mut commands: Commands,
@@ -81,26 +81,27 @@ pub fn attack(
     let mut player = player_query.single_mut();
 
     for player_transform in set.p1().iter_mut() {
-        let attack_position = player_transform.translation + ((player_transform.rotation * Vec3::Y) * 100.);
+        let attack_position =
+            player_transform.translation + ((player_transform.rotation * Vec3::Y) * 100.);
 
         if keys.just_pressed(KeyCode::Enter) {
-     commands
-        .spawn(SpriteBundle {
-            texture: asset_server.load("attacks/stone_cannon.png"),
-            transform: Transform {
-                scale: Vec3::splat(0.3),
-                translation: attack_position,
-                rotation: player_transform.rotation,
-            },
-            ..default()
-        })
-        .insert(Attack {
-            velocity: 10.,
-            damage: 20.,
-        });
+            commands
+                .spawn(SpriteBundle {
+                    texture: asset_server.load("attacks/stone_cannon.png"),
+                    transform: Transform {
+                        scale: Vec3::splat(0.3),
+                        translation: attack_position,
+                        rotation: player_transform.rotation,
+                    },
+                    ..default()
+                })
+                .insert(Attack {
+                    velocity: 10.,
+                    damage: 20.,
+                });
 
-        player.mana -= 1.;
-    }
+            player.mana -= 1.;
+        }
     }
 
     for mut attack_transform in set.p0().iter_mut() {

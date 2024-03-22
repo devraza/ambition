@@ -118,11 +118,11 @@ pub fn render_ui(
                 .show(ui, |ui| {
                     let health_bar = egui::widgets::ProgressBar::new(player.health)
                         .desired_width(window_width / 10.);
-                    let mut stamina_bar = egui::widgets::ProgressBar::new(player.stamina / player.stamina_max)
-                        .desired_width(window_width / 10.);
+                    let mut stamina_bar =
+                        egui::widgets::ProgressBar::new(player.stamina / player.stamina_max)
+                            .desired_width(window_width / 10.);
                     let mana_bar = egui::widgets::ProgressBar::new(player.mana / player.mana_max)
                         .desired_width(window_width / 10.);
-
 
                     // Show the stamina bar to be empty if the player has no stamina
                     if player.stamina <= 0. {
