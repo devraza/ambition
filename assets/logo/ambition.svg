@@ -26,9 +26,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="0.78573232"
-     inkscape:cx="230.9947"
-     inkscape:cy="383.08212"
+     inkscape:zoom="0.55559665"
+     inkscape:cx="665.0508"
+     inkscape:cy="165.58775"
      inkscape:window-width="2492"
      inkscape:window-height="1052"
      inkscape:window-x="0"
@@ -49,32 +49,11 @@
        x="3.5603841e-06"
        y="12.106169"
        transform="translate(0,-12.106165)" />
-    <g
-       id="g11"
-       style="fill:#f9f9f9;fill-opacity:1"
-       transform="matrix(1.4610708,0,0,1.4610708,-31.229864,-35.012994)"
-       inkscape:export-filename="./ambition-4x-nobg-white.png"
-       inkscape:export-xdpi="384"
-       inkscape:export-ydpi="384">
-      <g
-         id="g1"
-         transform="translate(1.8333333e-5,-20.306436)"
-         style="fill:#f9f9f9;fill-opacity:1">
-        <path
-           id="path1-6"
-           style="fill:#f9f9f9;fill-opacity:1;stroke-width:1.28923"
-           inkscape:transform-center-y="2.6463077"
-           d="M 67.733334,64.327814 60.459006,76.927272 53.184929,89.52672 h 8.940759 l 1.319698,-2.285615 0.656449,-1.136884 h -4.944398 l 4.287949,-7.426928 4.287948,-7.427168 4.287949,7.427168 4.287948,7.426928 h -4.944398 l 0.65645,1.136884 1.319698,2.285615 h 8.940757 L 75.007663,76.927272 Z" />
-        <path
-           id="path1-6-6"
-           style="fill:#f9f9f9;fill-opacity:1;stroke-width:1.28923"
-           inkscape:transform-center-y="2.6463051"
-           d="m 67.733333,78.807776 -7.274491,12.599231 -7.273975,12.599753 h 8.941057 l 0.0067,-0.0119 h 11.201383 l 0.0067,0.0119 h 8.941056 L 75.007825,91.407007 Z m 0,6.922058 4.288111,7.427454 4.265889,7.389212 h -17.108 l 4.26589,-7.389212 z" />
-      </g>
-      <path
-         id="rect3-3"
-         style="fill:#f9f9f9;fill-opacity:1;stroke-width:1.74119"
-         d="M 78.022588,96.623859 80.599121,94.047326 67.733333,81.181542 54.867544,94.047326 57.444077,96.623859 67.733333,86.334604 Z" />
-    </g>
+    <path
+       id="path1-6"
+       style="fill:#f9f9f9;fill-opacity:1;stroke-width:3.31004"
+       inkscape:transform-center-y="4.6501917"
+       d="m 67.733785,32.175177 -3.986463,6.904118 0.04541,0.02634 -23.08607,39.985404 -0.04449,-0.02543 -10.191361,17.650314 h 26.547665 4.598508 12.233629 7.229209 23.916058 l -4.04186,-7.000373 -0.0445,0.02543 -31.099864,-53.865379 0.04541,-0.02634 z m 0,17.772905 7.452597,12.910146 -7.452597,7.452598 -7.453505,-7.453505 z m -12.297194,21.296248 9.211544,9.210636 -7.629672,7.629673 H 45.715615 Z m 24.592572,9.09e-4 9.722793,16.8394 h -8.672147 -2.630702 l -7.629673,-7.629673 z"
+       inkscape:transform-center-x="-8.0000002e-06" />
   </g>
 </svg>
