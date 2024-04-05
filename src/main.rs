@@ -66,15 +66,6 @@ fn main() {
 
 // Bevy engine setup
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(SpriteBundle {
-        texture: asset_server.load("player/player-4x.png"),
-        transform: Transform {
-            scale: Vec3::splat(0.25),
-            ..default()
-        },
-        ..default()
-    });
-
     // Spawn the 2D camera
     commands.spawn(Camera2dBundle {
         camera: Camera {
