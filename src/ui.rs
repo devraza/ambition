@@ -105,7 +105,7 @@ pub fn render_ui(
     egui::CentralPanel::default()
         .frame(egui::containers::Frame {
             fill: egui::Color32::TRANSPARENT,
-            inner_margin: egui::style::Margin::same(10.),
+            inner_margin: crate::ui::egui::Margin::same(10.),
             ..default()
         })
         .show(ctx, |ui| {
@@ -116,8 +116,9 @@ pub fn render_ui(
             egui::Grid::new("Stats")
                 .spacing(egui::Vec2::new(20., 10.))
                 .show(ui, |ui| {
-                    let health_bar = egui::widgets::ProgressBar::new(player.health)
-                        .desired_width(window_width / 10.);
+                    let health_bar =
+                        egui::widgets::ProgressBar::new(player.health / player.health_max)
+                            .desired_width(window_width / 10.);
                     let mut stamina_bar =
                         egui::widgets::ProgressBar::new(player.stamina / player.stamina_max)
                             .desired_width(window_width / 10.);

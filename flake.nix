@@ -1,5 +1,5 @@
 {
-  description = "Rust development environment for Ambition using fenix";
+  description = "Rust development environment for Ambition";
 
   inputs = {
     utils.url = "github:numtide/flake-utils";
@@ -41,16 +41,14 @@
             pkgs.udev
             pkgs.alsa-lib
             pkgs.libxkbcommon
+            pkgs.wayland
           ]}"'';
           buildInputs = with pkgs; [
             xorg.libX11 xorg.libXcursor xorg.libXi xorg.libXrandr # To use the x11 feature
-            libxkbcommon # To use the wayland feature
+            libxkbcommon wayland # To use the wayland feature
             udev alsa-lib vulkan-loader
-            pkgs.nixgl.nixVulkanIntel
-            mold
-            clang
-            pkg-config
-            tokei
+
+            pkgs.nixgl.nixVulkanIntel mold clang pkg-config tokei
           ];
         };
       }

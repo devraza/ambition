@@ -13,12 +13,14 @@ mod player;
 use crate::player::*;
 mod ui;
 use crate::ui::*;
+mod enemy;
+use crate::enemy::*;
 
 // Version information
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const PKGNAME: &str = env!("CARGO_PKG_NAME");
 
-// Create a map of the Hypernova colorscheme
+// Create a map of the kagayaki colorscheme
 lazy_static! {
     static ref KAGAYAKI: HashMap<&'static str, (u8, u8, u8)> = vec![
         ("BLACK", (13, 13, 15)),
@@ -59,7 +61,15 @@ fn main() {
         .add_systems(Startup, (setup, setup_ui))
         .add_systems(
             Update,
-            (render_ui, movement, camera_follow, player_regen, attack),
+            (
+                render_ui,
+                player_movement,
+                player_regen,
+                player_attack,
+                attack_movement,
+                enemy_movement,
+                change_enemy_color,
+            ),
         )
         .run();
 }
@@ -96,5 +106,30 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             stamina_max: 10.,
             mana: 100.,
             mana_max: 100.,
+        });
+
+    // Spawn an enemy
+    commands
+        .spawn(SpriteBundle {
+            texture: asset_server.load("player/player-4x.png"),
+            transform: Transform {
+                scale: Vec3::splat(0.2),
+                ..default()
+            },
+            ..default()
+        })
+        .insert(Enemy {
+            name: "Goblin".to_string(),
+            movement_speed: 256.,
+            /*
+            rotation_speed: f32::to_radians(360.),
+
+            health: 10.,
+            health_max: 10.,
+            stamina: 10.,
+            stamina_max: 10.,
+            mana: 100.,
+            mana_max: 100.,
+            */
         });
 }

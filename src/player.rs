@@ -22,10 +22,11 @@ pub struct Attack {
 }
 
 // Define the player movement system
-pub fn movement(
+pub fn player_movement(
     time: Res<Time>,
     keys: Res<ButtonInput<KeyCode>>,
     mut player_query: Query<(&mut Player, &mut Transform), With<Player>>,
+    camera_query: Query<&mut Transform, (Without<Player>, With<Camera>)>,
 ) {
     let (mut player, mut transform) = player_query.single_mut();
 
@@ -66,62 +67,63 @@ pub fn movement(
 
     // Update the player translation with the translation
     transform.translation += movement_direction * movement_distance;
+
+    camera_follow(
+        camera_query,
+        transform.translation.x,
+        transform.translation.y,
+    )
 }
 
-pub fn attack(
+#[allow(clippy::type_complexity)]
+pub fn player_attack(
     keys: Res<ButtonInput<KeyCode>>,
-    mut set: ParamSet<(
-        Query<&mut Transform, With<Attack>>,
-        Query<&Transform, With<Player>>,
-    )>,
-    mut player_query: Query<&mut Player>,
+    mut player_query: Query<(&Transform, &mut Player), With<Player>>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
-    let mut player = player_query.single_mut();
+    let (transform, mut player) = player_query.single_mut();
+    let attack_position = transform.translation + (transform.rotation * Vec3::Y * 100.);
 
-    for player_transform in set.p1().iter_mut() {
-        let attack_position =
-            player_transform.translation + ((player_transform.rotation * Vec3::Y) * 100.);
+    if keys.just_pressed(KeyCode::Enter) {
+        commands
+            .spawn(SpriteBundle {
+                texture: asset_server.load("attacks/stone_cannon.png"),
+                transform: Transform {
+                    scale: Vec3::splat(0.3),
+                    translation: attack_position,
+                    rotation: transform.rotation,
+                },
+                ..default()
+            })
+            .insert(Attack {
+                velocity: 20.,
+                damage: 20.,
+            });
 
-        if keys.just_pressed(KeyCode::Enter) {
-            commands
-                .spawn(SpriteBundle {
-                    texture: asset_server.load("attacks/stone_cannon.png"),
-                    transform: Transform {
-                        scale: Vec3::splat(0.3),
-                        translation: attack_position,
-                        rotation: player_transform.rotation,
-                    },
-                    ..default()
-                })
-                .insert(Attack {
-                    velocity: 10.,
-                    damage: 20.,
-                });
-
-            player.mana -= 1.;
-        }
+        player.mana -= 1.;
     }
+}
 
-    for mut attack_transform in set.p0().iter_mut() {
-        let direction = attack_transform.rotation * Vec3::Y;
-        attack_transform.translation += direction * 20.;
+pub fn attack_movement(mut attack_query: Query<(&mut Transform, Option<&Attack>), With<Attack>>) {
+    for (mut transform, attack) in attack_query.iter_mut() {
+        if let Some(attack) = attack {
+            let direction = transform.rotation * Vec3::Y;
+            transform.translation += direction * attack.velocity;
+        }
     }
 }
 
 // Function to make the camera follow the plaeyr
-pub fn camera_follow(
-    mut player: Query<(&Player, &mut Transform)>,
-    mut cameras: Query<&mut Transform, (With<Camera>, Without<Player>)>,
+fn camera_follow(
+    mut camera_query: Query<&mut Transform, (Without<Player>, With<Camera>)>,
+    player_x: f32,
+    player_y: f32,
 ) {
-    let (_, transform) = player.single_mut();
-    let pos = transform.translation;
+    let mut camera_transform = camera_query.single_mut();
 
-    for mut camera_transform in &mut cameras {
-        camera_transform.translation.x = pos.x;
-        camera_transform.translation.y = pos.y;
-    }
+    camera_transform.translation.x = player_x;
+    camera_transform.translation.y = player_y;
 }
 
 pub fn player_regen(mut player_query: Query<&mut Player, With<Player>>, time: Res<Time>) {
