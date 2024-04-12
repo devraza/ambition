@@ -1,3 +1,9 @@
+# Fonts
 target/
 result
 .direnv/
+
+# Assets
+assets/player
+assets/logo
+assets/attacks
