@@ -117,16 +117,16 @@ pub fn render_ui(
                 .spacing(egui::Vec2::new(20., 10.))
                 .show(ui, |ui| {
                     let health_bar =
-                        egui::widgets::ProgressBar::new(player.health / player.health_max)
+                        egui::widgets::ProgressBar::new(player.stats.health / player.stats.health_max)
                             .desired_width(window_width / 10.);
                     let mut stamina_bar =
-                        egui::widgets::ProgressBar::new(player.stamina / player.stamina_max)
+                        egui::widgets::ProgressBar::new(player.stats.stamina / player.stats.stamina_max)
                             .desired_width(window_width / 10.);
-                    let mana_bar = egui::widgets::ProgressBar::new(player.mana / player.mana_max)
+                    let mana_bar = egui::widgets::ProgressBar::new(player.stats.mana / player.stats.mana_max)
                         .desired_width(window_width / 10.);
 
                     // Show the stamina bar to be empty if the player has no stamina
-                    if player.stamina <= 0. {
+                    if player.stats.stamina <= 0. {
                         stamina_bar =
                             stamina_bar.fill(egui::Color32::from_rgba_unmultiplied(0, 0, 0, 0));
                     };

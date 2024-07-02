@@ -2,22 +2,15 @@ use bevy::prelude::*;
 use std::f32::consts::PI;
 
 use crate::player::*;
+use crate::helpers::*;
 
 // Define the enemy component
 #[derive(Component)]
 pub struct Enemy {
     pub name: String,
     pub movement_speed: f32,
-    /*
-    pub rotation_speed: f32,
 
-    pub health: f32,
-    pub health_max: f32,
-    pub stamina: f32,
-    pub stamina_max: f32,
-    pub mana: f32,
-    pub mana_max: f32,
-    */
+    pub stats: CommonStats,
 }
 
 // Define the enemy movement system

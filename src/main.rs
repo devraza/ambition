@@ -100,12 +100,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             movement_speed: 512.,
             rotation_speed: f32::to_radians(360.),
 
-            health: 10.,
-            health_max: 10.,
-            stamina: 10.,
-            stamina_max: 10.,
-            mana: 100.,
-            mana_max: 100.,
+            stats: CommonStats {
+                health: 10.,
+                health_max: 10.,
+                stamina: 10.,
+                stamina_max: 10.,
+                mana: 100.,
+                mana_max: 100.,
+            }
         });
 
     // Spawn an enemy
@@ -121,15 +123,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         .insert(Enemy {
             name: "Goblin".to_string(),
             movement_speed: 256.,
-            /*
-            rotation_speed: f32::to_radians(360.),
 
-            health: 10.,
-            health_max: 10.,
-            stamina: 10.,
-            stamina_max: 10.,
-            mana: 100.,
-            mana_max: 100.,
-            */
+            stats: CommonStats {
+                health: 5.,
+                health_max: 5.,
+                stamina: 8.,
+                stamina_max: 8.,
+                mana: 50.,
+                mana_max: 50.,
+            }
         });
 }

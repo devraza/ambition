@@ -1,17 +1,14 @@
 use bevy::prelude::*;
 
+use crate::helpers::*;
+
 // Define the player component
 #[derive(Component)]
 pub struct Player {
     pub movement_speed: f32,
     pub rotation_speed: f32,
 
-    pub health: f32,
-    pub health_max: f32,
-    pub stamina: f32,
-    pub stamina_max: f32,
-    pub mana: f32,
-    pub mana_max: f32,
+    pub stats: CommonStats,
 }
 
 // Define the attacking component
@@ -50,9 +47,9 @@ pub fn player_movement(
     let mut is_dashing = false;
 
     // Dash on space key press if the player has the stamina
-    if keys.just_pressed(KeyCode::Space) && player.stamina >= 1. {
+    if keys.just_pressed(KeyCode::Space) && player.stats.stamina >= 1. {
         is_dashing = true;
-        player.stamina -= 1.;
+        player.stats.stamina -= 1.;
         movement_distance = 256.;
     }
 
@@ -101,7 +98,7 @@ pub fn player_attack(
                 damage: 20.,
             });
 
-        player.mana -= 1.;
+        player.stats.mana -= 1.;
     }
 }
 
@@ -128,7 +125,7 @@ fn camera_follow(
 
 pub fn player_regen(mut player_query: Query<&mut Player, With<Player>>, time: Res<Time>) {
     let mut player = player_query.single_mut();
-    if (player.stamina / player.stamina_max) < 1. {
-        player.stamina += 0.1 * time.delta_seconds();
+    if (player.stats.stamina / player.stats.stamina_max) < 1. {
+        player.stats.stamina += 0.1 * time.delta_seconds();
     }
 }
