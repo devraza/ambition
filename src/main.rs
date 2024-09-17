@@ -107,7 +107,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 stamina_max: 10.,
                 mana: 100.,
                 mana_max: 100.,
-            }
+            },
         });
 
     // Spawn an enemy
@@ -131,6 +131,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 stamina_max: 8.,
                 mana: 50.,
                 mana_max: 50.,
-            }
+            },
         });
 }

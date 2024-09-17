@@ -15,4 +15,3 @@ pub struct CommonStats {
     pub mana: f32,
     pub mana_max: f32,
 }
-

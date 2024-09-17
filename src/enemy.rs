@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use std::f32::consts::PI;
 
-use crate::player::*;
 use crate::helpers::*;
+use crate::player::*;
 
 // Define the enemy component
 #[derive(Component)]
